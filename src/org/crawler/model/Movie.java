@@ -1,5 +1,6 @@
 package org.crawler.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,8 @@ public class Movie {
 
 	@Override
 	public String toString() {
-		return title + "; " + date + "; " + url;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		return title + "; " + dateFormat.format(date) + "; " + url;
 	}
 
 

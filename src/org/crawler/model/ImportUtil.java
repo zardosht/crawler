@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ImportUtil {
 	
@@ -20,11 +21,11 @@ public class ImportUtil {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		List<Movie> result = new ArrayList<Movie>();
 		String line = null;
-		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 		int lineNumber = 0;
 		while((line = reader.readLine()) != null) {
 			lineNumber++;
-			String[] split = line.split("|");
+			String[] split = line.split("\t");
 			String id = split[0];
 			String title = split[1];
 			Date date;
