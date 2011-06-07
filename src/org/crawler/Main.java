@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
+import org.crawler.controler.GoogleCrawler;
 import org.crawler.model.ImportUtil;
 import org.crawler.model.Movie;
 
@@ -12,15 +13,22 @@ public class Main {
 
 	/**
 	 * @param args
-	 * @throws ParseException 
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) throws Exception {
 		
-		List<Movie> movies = ImportUtil.importMoviesFromFile(new File("data/u.item"));
-		for(Movie movie : movies){
-			System.out.println(movie.toString());
+//		List<Movie> movies = ImportUtil.importMoviesFromFile(new File("data/u.item"));
+	
+		GoogleCrawler crawler = new GoogleCrawler("http://imdb.com");
+		
+//		for(Movie movie : movies){
+//			crawler.getKeywords(movie);
+//		}
+		
+		for(String str : crawler.getKeywords(new Movie(null, "Goldeneye", null, null))) {
+			System.out.print(str+", ");
 		}
+		System.out.println("");
 		
 	}
 
