@@ -1,6 +1,5 @@
 package org.crawler;
 
-import java.awt.Event;
 import java.io.File;
 import java.util.List;
 
