@@ -12,6 +12,7 @@ public class Movie {
 	private Date date;
 	private String url;
 	private List<String> keywords;
+	private String keywordsString;
 	
 	public Movie(String id, String title, Date date, String url) {
 		this.id = id;
@@ -45,6 +46,22 @@ public class Movie {
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		return title + "; " + dateFormat.format(date) + "; " + url;
+	}
+
+	public boolean containsKeyword(String text) {
+		return getKeywordString().contains(text);
+	}
+
+	private String getKeywordString() {
+		if(keywordsString == null){
+			StringBuilder sb = new StringBuilder("");
+			for(String keyword : keywords){
+				sb.append(keyword);
+				sb.append(";");
+			}
+			keywordsString = sb.toString();
+		}
+		return keywordsString;
 	}
 
 

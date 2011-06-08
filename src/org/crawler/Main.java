@@ -1,6 +1,6 @@
 package org.crawler;
 
-
+import java.awt.Event;
 import java.io.File;
 import java.util.List;
 
@@ -10,11 +10,17 @@ import org.crawler.model.Movie;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class Main {
 
@@ -50,34 +56,71 @@ public class Main {
 	}
 
 	private static void openGUI(List<Movie> movies) {
-		Display display = new Display ();
+		Display display = new Display();
 		Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout());
-		
-		
-		ListViewer lv = new ListViewer(shell, SWT.V_SCROLL | SWT.H_SCROLL);
-		lv.getList().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true));
-		lv.setLabelProvider(new LabelProvider(){
+		shell.setLayout(new GridLayout(2, false));
+
+		Label lblKeywordFilter = new Label(shell, SWT.NONE);
+		lblKeywordFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
+				false, false));
+		lblKeywordFilter.setText("Keywords Filter: ");
+
+		final Text txtKeywordsFilter = new Text(shell, SWT.SINGLE | SWT.LEAD
+				| SWT.BORDER);
+		txtKeywordsFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false));
+		txtKeywordsFilter.setText("");
+
+		final ListViewer lv = new ListViewer(shell, SWT.BORDER | SWT.V_SCROLL
+				| SWT.H_SCROLL);
+		lv.getList().setLayoutData(
+				new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1));
+		lv.setLabelProvider(new LabelProvider() {
 
 			@Override
 			public String getText(Object element) {
-				if(element instanceof Movie){
-					return ((Movie)element).getTitle();
+				if (element instanceof Movie) {
+					return ((Movie) element).getTitle();
 				}
 				return super.getText(element);
 			}
-			
+
 		});
-		
+
 		lv.setContentProvider(new ArrayContentProvider());
+		final ViewerFilter filter = new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof Movie) {
+					return ((Movie) element).containsKeyword(txtKeywordsFilter
+							.getText());
+				}
+				return false;
+			}
+		};
 		lv.setInput(movies);
-		
-	 
-		shell.open ();
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+
+		txtKeywordsFilter.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (txtKeywordsFilter.getText() != null
+						&& !"".equals(txtKeywordsFilter.getText())) {
+					lv.addFilter(filter);
+				}else{
+					lv.removeFilter(filter);
+				}
+			}
+		});
+
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		display.dispose ();
-	}		
+		display.dispose();
+	}
 
 }
