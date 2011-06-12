@@ -23,11 +23,11 @@ public class Movie {
 	}
 	
 	public String getId() {
-		return id;
+		return id != null ? id : " ";
 	}
 
 	public String getTitle() {
-		return title;
+		return title != null ? title : " ";
 	}
 
 	public Date getDate() {
@@ -35,7 +35,7 @@ public class Movie {
 	}
 
 	public String getUrl() {
-		return url;
+		return url != null ? url : " ";
 	}
 
 	public List<String> getKeywords() {
@@ -68,6 +68,7 @@ public class Movie {
 			StringBuilder sb = new StringBuilder("");
 			for(String keyword : keywords){
 				sb.append(keyword.toLowerCase());
+				sb.append(";");
 			}
 			keywordsString = sb.toString();
 		}

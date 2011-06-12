@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.crawler.controler.GoogleCrawler;
 import org.crawler.model.CSVWriter;
@@ -35,22 +39,33 @@ import org.eclipse.swt.widgets.Text;
 
 public class Main {
 
+	private static Logger logger = Logger.getLogger(Main.class.getPackage()
+			.getName());
+
 	/**
 	 * @param args
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
 
+		configureLogger();
+		
 		if (args.length > 0 && args[0].equals("--gui")) {
+			logger.info("GUI started.");
+			File file = new File("results/c1.result");
 			List<Movie> movies = DataUtil
-					.importMoviesFromCrawlingResults(new File(
-							"results/c1.result"));
+					.importMoviesFromCrawlingResults(file);
+			logger.info("Extracted movies form result file: "  + file.getName());
 			openGUI(movies);
 		} else {
-			CSVWriter csvWriter = new CSVWriter(new File("results/c1.result"),
+			logger.info("Google Crawling started.");
+			File resultsFile = new File("results/c1.result");
+			logger.info("Writing results to file: " + resultsFile.getName());
+			CSVWriter csvWriter = new CSVWriter(resultsFile,
 					Arrays.asList("id", "title", "date", "url", "keywords"));
-			List<Movie> movies = DataUtil.importMoviesFromFile(new File(
-					"data/u.item"));
+			File itemsFile = new File("data/u.item");
+			logger.info("Importing movies from file: " + itemsFile.getName());
+			List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
 
 			GoogleCrawler crawler = new GoogleCrawler("http://imdb.com");
 
@@ -59,10 +74,13 @@ public class Main {
 				for (String keyword : keywords) {
 					movie.getKeywords().add(keyword);
 				}
-				System.out.println(movie.toString());
+				logger.info("Keywords extarcted for: " + movie.getTitle());
 				writeCrawlerResult(csvWriter, movie);
+				System.out.println(movie.toString());
+				logger.info("Wrote record to result file: " + movie.toString());
 			}
 			csvWriter.close();
+			logger.info("Google crawling finished.");
 		}
 
 	}
@@ -77,7 +95,7 @@ public class Main {
 			record.put("date", dateFormat.format(movie.getDate()));
 		} catch (Exception e) {
 			e.printStackTrace();
-			record.put("date", "");
+			record.put("date", " ");
 		}
 		record.put("url", movie.getUrl());
 		StringBuilder sb = new StringBuilder("");
@@ -197,6 +215,21 @@ public class Main {
 				display.sleep();
 		}
 		display.dispose();
+	}
+
+	private static void configureLogger() {
+		logger.setUseParentHandlers(false);
+		try {
+			FileHandler fileHandler = new FileHandler("results/log.txt");
+			SimpleFormatter formatter = new SimpleFormatter();
+			fileHandler.setFormatter(formatter);
+			logger.addHandler(fileHandler);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.setLevel(Level.INFO);
 	}
 
 }

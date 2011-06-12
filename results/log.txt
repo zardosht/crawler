@@ -1,0 +1,4 @@
+12.06.2011 22:14:12 org.crawler.Main main
+INFO: GUI started.
+12.06.2011 22:14:12 org.crawler.Main main
+INFO: Extracted movies form result file: c1.result

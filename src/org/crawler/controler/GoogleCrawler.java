@@ -3,6 +3,7 @@ package org.crawler.controler;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -12,14 +13,18 @@ import org.crawler.model.Movie;
 
 public class GoogleCrawler extends Crawler {
 
+	private static Logger logger = Logger.getLogger(GoogleCrawler.class.getPackage().getName());
+	
 	public GoogleCrawler(String baseUrl) {
 		super(baseUrl);
 	}
 
 	public List<String> getKeywords(Movie movie) throws Exception {
 		ArrayList<String> result = new ArrayList<String>();
+		logger.info("Querying Google for movie: " + movie.getTitle());
 		String movieUrl = getMovieUrlFromGoogle(movie);
 		System.out.println(movieUrl);
+		logger.info("Retrieved movei URL from Google: " + movieUrl);
 		if (!movieUrl.isEmpty()) {
 			Source keyWordSite = readSite(movieUrl + "keywords");
 			for (Element b : keyWordSite.getAllElementsByClass("keyword")) {
@@ -29,6 +34,7 @@ public class GoogleCrawler extends Crawler {
 				}
 			}
 		}
+		logger.info("Retrieved keywords: " + result);
 		return result;
 	}
 
