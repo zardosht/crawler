@@ -45,19 +45,29 @@ public class Movie {
 	@Override
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-		return title + "; " + dateFormat.format(date) + "; " + url;
+		StringBuilder sb = new StringBuilder("");
+		for(String keyword : keywords){
+			sb.append(keyword);
+			sb.append(";");
+		}
+		return id + "; " + title + "; " + dateFormat.format(date) + "; " + url + "; KEYWORDS: " + sb.toString();
 	}
 
-	public boolean containsKeyword(String text) {
-		return getKeywordString().contains(text);
+	public boolean containsKeywords(String text) {
+		String[] split = text.split(" ");
+		for(int i = 0; i < split.length; i++){
+			if(!getKeywordString().contains(split[i].trim().toLowerCase())){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private String getKeywordString() {
 		if(keywordsString == null){
 			StringBuilder sb = new StringBuilder("");
 			for(String keyword : keywords){
-				sb.append(keyword);
-				sb.append(";");
+				sb.append(keyword.toLowerCase());
 			}
 			keywordsString = sb.toString();
 		}

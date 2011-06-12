@@ -9,7 +9,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 public class Crawler {
 
 	
-	public static long TIMEOUT = 500; //1 second
+	public static long TIMEOUT = 5000; //1 second
 	
 	private long lastCrawl = 0;
 
@@ -40,7 +40,6 @@ public class Crawler {
 
 	protected Source readSite(String url) throws Exception {
 		timeOut();
-		
 		HttpGet get = new HttpGet(url);
 		HttpResponse response = getClient().execute(get);
 		System.out.println(response);

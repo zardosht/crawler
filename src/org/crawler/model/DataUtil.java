@@ -12,9 +12,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class ImportUtil {
+public class DataUtil {
 	
-	private ImportUtil(){
+
+	private DataUtil(){
 	}
 
 	public static List<Movie> importMoviesFromFile(File file) throws IOException {
@@ -41,4 +42,35 @@ public class ImportUtil {
 		
 		return result;
 	}
+
+	public static List<Movie> importMoviesFromCrawlingResults(File file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		List<Movie> result = new ArrayList<Movie>();
+		String line = null;
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+		int lineNumber = 0;
+		while((line = reader.readLine()) != null) {
+			lineNumber++;
+			String[] split = line.split(";");
+			String id = split[0];
+			String title = split[1];
+			Date date;
+			try {
+				date = dateFormat.parse(split[2]);
+			} catch (ParseException e) {
+				System.out.println("WARNING: Could not parse date! " + file.getName() + ":" + lineNumber);
+				date = new Date();
+			}
+			String url = split[3];
+			Movie movie = new Movie(id, title, date, url);
+			for(int i = 4; i < split.length; i++){
+				movie.getKeywords().add(split[i]);
+			}
+			result.add(movie);
+		}
+		
+		return result;
+	}
+
+	
 }
