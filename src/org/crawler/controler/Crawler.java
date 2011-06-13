@@ -14,10 +14,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class Crawler {
 
-	private static Logger logger = Logger.getLogger(Crawler.class.getPackage().getName());
-	
-	public long TIMEOUT = 1000; //1 second
-	
+	private static Logger logger = Logger.getLogger(Crawler.class.getPackage()
+			.getName());
+
+	public long TIMEOUT = 1000; // 1 second
+
 	private long lastCrawl = 0;
 
 	private DefaultHttpClient client;
@@ -25,10 +26,11 @@ public class Crawler {
 	protected ArrayList<String> disallow;
 
 	private int totalSites;
+
 	private int relevantSites;
 
 	protected final String baseUrl;
-	
+
 	public Crawler(String baseUrl) throws Exception {
 		this.baseUrl = baseUrl;
 		client = new DefaultHttpClient();
@@ -39,35 +41,37 @@ public class Crawler {
 
 	private void intRobotsTxtFilter(String baseUrl) throws Exception {
 		disallow = new ArrayList<String>();
-		HttpGet get = new HttpGet(baseUrl+"/robots.txt");
+		HttpGet get = new HttpGet(baseUrl + "/robots.txt");
 		HttpResponse response = getClient().execute(get);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				response.getEntity().getContent()));
 		String line = "";
 		boolean concerningUs = false;
-		while((line = reader.readLine()) != null) {
+		while ((line = reader.readLine()) != null) {
 			line = line.trim();
-			if(line.startsWith("#")) {
+			if (line.startsWith("#")) {
 				continue;
 			}
 			String[] split = line.split(":");
-			if(split.length == 2) {
-				if(split[0].trim().equalsIgnoreCase("user-agent")) {
-					concerningUs = split[1].trim().equals("*")?true:false;
+			if (split.length == 2) {
+				if (split[0].trim().equalsIgnoreCase("user-agent")) {
+					concerningUs = split[1].trim().equals("*") ? true : false;
 				}
-				if(!concerningUs) continue;
-				if(split[0].trim().equalsIgnoreCase("disallow")) {
+				if (!concerningUs)
+					continue;
+				if (split[0].trim().equalsIgnoreCase("disallow")) {
 					disallow.add(split[1].trim());
 				}
 			}
-			
+
 		}
 	}
 
 	protected void timeOut() {
-		long timeDifference = System.currentTimeMillis()-lastCrawl;
-		if(timeDifference < TIMEOUT) {
+		long timeDifference = System.currentTimeMillis() - lastCrawl;
+		if (timeDifference < TIMEOUT) {
 			try {
-				Thread.sleep(TIMEOUT-timeDifference);
+				Thread.sleep(TIMEOUT - timeDifference);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -85,9 +89,9 @@ public class Crawler {
 		HttpResponse response = getClient().execute(get);
 		System.out.println(response);
 		logger.info("Response: " + response);
-		
+
 		totalSites++;
-		
+
 		Source source = new Source(response.getEntity().getContent());
 		source.setLogger(null);
 		return source;
@@ -101,17 +105,26 @@ public class Crawler {
 				result.add(anker.getTextExtractor().toString());
 			}
 		}
-		if(result.size()>0) relevantSites++;
+		if (result.size() > 0)
+			relevantSites++;
 		return result;
 	}
 
 	protected boolean allowed(String value) {
-		for(String disallowed : disallow) {
-			if(value.startsWith(baseUrl+disallowed) || value.startsWith(disallowed)) {
+		for (String disallowed : disallow) {
+			if (value.startsWith(baseUrl + disallowed)
+					|| value.startsWith(disallowed)) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
+	public int getVisited() {
+		return totalSites;
+	}
+
+	public int getVisitedRelevant() {
+		return relevantSites;
+	}
 }

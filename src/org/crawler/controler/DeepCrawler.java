@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.PriorityQueue;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -44,7 +43,7 @@ public class DeepCrawler extends Crawler {
 		if (movieUrl.isEmpty()) {
 			return keywords;
 		}
-		return findSitesWithKeywords(readSite(movieUrl),movieUrl);
+		return findSitesWithKeywords(readSite(movieUrl), movieUrl);
 	}
 
 	private String createSearchQuery(Movie movie)
@@ -57,12 +56,12 @@ public class DeepCrawler extends Crawler {
 		return url;
 	}
 
-	private List<String> findSitesWithKeywords(Source movieSite, String currentUrl)
-			throws Exception {
+	private List<String> findSitesWithKeywords(Source movieSite,
+			String currentUrl) throws Exception {
 		List<String> queue = new ArrayList<String>();
 		for (Element link : movieSite.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			// filter by robots txt 
+			// filter by robots txt
 			if (value != null && allowed(value)) {
 				queue.add(value);
 			}
@@ -72,12 +71,14 @@ public class DeepCrawler extends Crawler {
 
 		int searchlimit = 15;
 		for (String partUrl : queue) {
-			String url = (partUrl.startsWith("/"))?baseUrl+partUrl:currentUrl+partUrl;
+			String url = (partUrl.startsWith("/")) ? baseUrl + partUrl
+					: currentUrl + partUrl;
 			ArrayList<String> keywords = findKeyWords(readSite(url));
 			if (keywords.size() > 0) {
 				return keywords;
 			}
-			if(searchlimit--<=0) break;
+			if (searchlimit-- <= 0)
+				break;
 		}
 
 		return new ArrayList<String>();
@@ -123,7 +124,7 @@ public class DeepCrawler extends Crawler {
 			List<String> extractedGenres = extractGenres(resultRow);
 			double relevance = getRelevance(genres, extractedGenres);
 			if (relevance > lastRelevance) {
-				url = baseUrl+getTileUrl(resultRow);
+				url = baseUrl + getTileUrl(resultRow);
 				lastRelevance = relevance;
 			}
 

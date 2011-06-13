@@ -1,6 +1,7 @@
 package org.crawler;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.crawler.controler.Crawler;
 import org.crawler.controler.DeepCrawler;
 import org.crawler.controler.GoogleCrawler;
 import org.crawler.model.CSVWriter;
@@ -26,6 +28,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -54,14 +57,15 @@ public class Main {
 			configureLogger("results/gui.log.txt");
 			openGui();
 		} else {
-//			configureLogger("results/c1.google.log.txt");
-//			startGoogleCrawler();
+			configureLogger("results/c1.google.log.txt");
+			startGoogleCrawler();
 			
 			configureLogger("results/c2.deep.log.txt");
 			startDeepCrawler();
 		}
 
 	}
+
 
 	private static void startDeepCrawler() throws Exception {
 		logger.info("Deep Crawling started.");
@@ -86,7 +90,9 @@ public class Main {
 			logger.info("Wrote record to result file: " + movie.toString());
 		}
 		csvWriter.close();
-		logger.info("Google crawling finished.");
+		logger.info("Deep crawling finished.");
+		
+		writeEval(crawler, "results/c2.deep.eval", movies.size());
 	}
 
 	private static void openGui() throws IOException {
@@ -122,6 +128,26 @@ public class Main {
 		}
 		csvWriter.close();
 		logger.info("Google crawling finished.");
+		
+		writeEval(crawler, "results/c1.google.eval", movies.size());
+	}
+
+	private static void writeEval(Crawler crawler, String evalFile, int numMovies) throws IOException {
+		int visited = crawler.getVisited();
+		int visitedRelevant = crawler.getVisitedRelevant();
+		double harvestRate =  (double)visitedRelevant / (double)visited;
+		double coverage = (double)visitedRelevant / numMovies;
+		
+		
+		FileWriter fw = new FileWriter(new File(evalFile));
+		fw.write("Visted Pages: " + String.format("%d", visited));
+		fw.write(System.getProperty("line.separator"));
+		fw.write("Visted Relevant Pages: " + String.format("%d", visitedRelevant));
+		fw.write(System.getProperty("line.separator"));
+		fw.write("Coverage: " + String.format("%.3f", coverage));
+		fw.write(System.getProperty("line.separator"));
+		fw.write("Harvest Rate: " + String.format("%.3f", harvestRate));
+		fw.close();
 	}
 
 	public static void writeCrawlerResult(CSVWriter csvWriter, Movie movie)
@@ -221,6 +247,7 @@ public class Main {
 				new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		lvKeywords.setLabelProvider(new LabelProvider());
 		lvKeywords.setContentProvider(new ArrayContentProvider());
+		lvKeywords.setSorter(new ViewerSorter());
 
 		lvMovies.addSelectionChangedListener(new ISelectionChangedListener() {
 
