@@ -1,6 +1,7 @@
 package org.crawler.controler;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,21 +29,21 @@ public class DeepCrawler extends Crawler {
 
 	public List<String> getKeywords(Movie movie) throws Exception {
 		String normalTitle = getNormalTitle(movie.getTitle());
-		String year = getYear(movie.getDate());
-		String encodedParam = URLEncoder.encode(
-				String.format("release_date=%s,%s&title=%s", year, year, normalTitle)
-				, "UTF-8");
-		String url =  "http://www.imdb.com/search/title?" + encodedParam;
-		Source source = readSite(url);
-		String movieUrl = findMovieUrl(source);
-		Source movieSite = readSite(movieUrl);
-		List<String> keywords = extractKeywords(movieSite);
+//		String year = getYear(movie.getDate());
+//		String encodedParam = URLEncoder.encode(
+//				String.format("release_date=%s,%s&title=%s", year, year, normalTitle)
+//				, "UTF-8");
+//		String url =  "http://www.imdb.com/search/title?" + encodedParam;
+//		Source source = readSite(url);
+//		String movieUrl = findMovieUrl(source);
+//		Source movieSite = readSite(movieUrl);
+		List<String> keywords = extractKeywords(null);
 		return keywords;
 	}
 
 	private List<String> extractKeywords(Source movieSite) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> keywords = new ArrayList<String>();
+		return keywords;
 	}
 
 	private String findMovieUrl(Source source) {
@@ -57,7 +58,17 @@ public class DeepCrawler extends Crawler {
 
 	private String getNormalTitle(String title) {
 		// replace the, a, an, ...
-		return null;
+		String result = title;
+		result.replaceAll("([^()]+)", "");
+		String[] putToFront = new String[]{", the", ", a", ", an"};
+		for(int i = 0; i < putToFront.length; i++){
+			if(title.toLowerCase().contains(putToFront[i])){
+				result = result.toLowerCase().replace(putToFront[i], "");
+				result += putToFront[i] + " ";
+			}
+		}
+		
+		return result;
 	}
 
 }
