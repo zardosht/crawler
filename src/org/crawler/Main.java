@@ -54,8 +54,8 @@ public class Main {
 			configureLogger("results/gui.log.txt");
 			openGui();
 		} else {
-			configureLogger("results/c1.google.log.txt");
-			startGoogleCrawler();
+//			configureLogger("results/c1.google.log.txt");
+//			startGoogleCrawler();
 			
 			configureLogger("results/c2.deep.log.txt");
 			startDeepCrawler();

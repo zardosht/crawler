@@ -1,0 +1,14 @@
+13.06.2011 16:49:10 org.crawler.Main startGoogleCrawler
+INFO: Google Crawling started.
+13.06.2011 16:49:10 org.crawler.Main startGoogleCrawler
+INFO: Writing results to file: c1.google.result
+13.06.2011 16:49:10 org.crawler.Main startGoogleCrawler
+INFO: Importing movies from file: u.item
+13.06.2011 16:49:11 org.crawler.controler.GoogleCrawler getKeywords
+INFO: Querying Google for movie: Toy Story (1995)
+13.06.2011 16:49:11 org.crawler.controler.Crawler readSite
+INFO: Retrieving: http://google.com/search?q=Toy+Story+%281995%29
+13.06.2011 16:49:11 org.crawler.controler.Crawler readSite
+INFO: Response: HTTP/1.0 200 OK [Date: Mon, 13 Jun 2011 14:49:12 GMT, Expires: -1, Cache-Control: private, max-age=0, Content-Type: text/html; charset=ISO-8859-1, Set-Cookie: PREF=ID=bfd72d75b882df3f:FF=0:TM=1307976552:LM=1307976552:S=fuTQJLPzFH00Q7Qw; expires=Wed, 12-Jun-2013 14:49:12 GMT; path=/; domain=.google.com, Set-Cookie: NID=47=STaoXRUirCXGTG5CFh7R2GCBU8mbhqbIDQfEyretoLikCa0juTeZCVi8tmixyzTYMmlSCgXWBAFTfzc6w0V-foFTvgSRKbvqfHkkSBm40SEAQQ23Ek3cAtONHxD99QFf; expires=Tue, 13-Dec-2011 14:49:12 GMT; path=/; domain=.google.com; HttpOnly, Server: gws, X-XSS-Protection: 1; mode=block, X-Cache: MISS from proxy.stusta.mhn.de, X-Cache-Lookup: MISS from proxy.stusta.mhn.de:3128, Via: 1.0 proxy.stusta.mhn.de:3128 (squid/2.7.STABLE9), Connection: close]
+13.06.2011 16:49:11 org.crawler.controler.GoogleCrawler getKeywords
+INFO: Retrieved movei URL from Google: http://www.imdb.com/title/tt0114709/

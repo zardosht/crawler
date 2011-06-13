@@ -16,7 +16,7 @@ public class Crawler {
 
 	private static Logger logger = Logger.getLogger(Crawler.class.getPackage().getName());
 	
-	public static long TIMEOUT = 3000; //1 second
+	public static long TIMEOUT = 3000; //3 second
 	
 	private long lastCrawl = 0;
 

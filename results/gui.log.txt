@@ -1,0 +1,2 @@
+13.06.2011 16:47:37 org.crawler.Main openGui
+INFO: GUI started.

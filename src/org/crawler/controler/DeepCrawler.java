@@ -1,8 +1,12 @@
 package org.crawler.controler;
 
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import net.htmlparser.jericho.Source;
 
@@ -29,35 +33,44 @@ public class DeepCrawler extends Crawler {
 	public List<String> getKeywords(Movie movie) throws Exception {
 		String normalTitle = getNormalTitle(movie.getTitle());
 		String year = getYear(movie.getDate());
-		String encodedParam = URLEncoder.encode(
-				String.format("release_date=%s,%s&title=%s", year, year, normalTitle)
-				, "UTF-8");
-		String url =  "http://www.imdb.com/search/title?" + encodedParam;
+		String encodedParam = String.format("release_date=%s,%s&title=%s", year, year, URLEncoder.encode(normalTitle, "UTF-8"));
+		String url = "http://www.imdb.com/search/title?" + encodedParam;
 		Source source = readSite(url);
-		String movieUrl = findMovieUrl(source);
-		Source movieSite = readSite(movieUrl);
-		List<String> keywords = extractKeywords(movieSite);
+		String movieUrl = findMovieUrl(source, movie);
+		// Source movieSite = readSite(movieUrl);
+		List<String> keywords = extractKeywords(null);
 		return keywords;
 	}
 
 	private List<String> extractKeywords(Source movieSite) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> keywords = new ArrayList<String>();
+		return keywords;
 	}
 
-	private String findMovieUrl(Source source) {
-		// TODO Auto-generated method stub
-		return null;
+	private String findMovieUrl(Source source, Movie movie) {
+		String url = "";
+		return url;
 	}
 
 	private String getYear(Date date) {
-		// TODO Auto-generated method stub
-		return null;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy", Locale.US);
+		String result = dateFormat.format(date);
+		return result;
 	}
 
 	private String getNormalTitle(String title) {
 		// replace the, a, an, ...
-		return null;
+		String result = title;
+		result = result.replaceAll("\\(.*\\)", "");
+		String[] putToFront = new String[] { ", the", ", a", ", an" };
+		for (int i = 0; i < putToFront.length; i++) {
+			if (title.toLowerCase().contains(putToFront[i])) {
+				result = result.toLowerCase().replace(putToFront[i], "");
+				result = putToFront[i].replace(", ", "") + " " + result;
+			}
+		}
+
+		return result.trim();
 	}
 
 }
