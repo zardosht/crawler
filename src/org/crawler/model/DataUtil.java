@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Locale;
 
 public class DataUtil {
-	
 
-	private DataUtil(){
+	private DataUtil() {
 	}
 
-	public static List<Movie> importMoviesFromFile(File file) throws IOException {
+	public static List<Movie> importMoviesFromFile(File file)
+			throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		List<Movie> result = new ArrayList<Movie>();
 		String line = null;
 		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 		int lineNumber = 0;
-		while((line = reader.readLine()) != null) {
+		while ((line = reader.readLine()) != null) {
 			lineNumber++;
 			String[] split = line.split("\t");
 			String id = split[0];
@@ -33,23 +33,38 @@ public class DataUtil {
 			try {
 				date = dateFormat.parse(split[2]);
 			} catch (ParseException e) {
-				System.out.println("WARNING: Could not parse date! " + file.getName() + ":" + lineNumber);
+				System.out.println("WARNING: Could not parse date! "
+						+ file.getName() + ":" + lineNumber);
 				date = new Date();
 			}
 			String url = split[4];
-			result.add(new Movie(id, title, date, url));
+			List<String> genres = new ArrayList<String>();
+
+			String[] genre = new String[] { "Action", "Adventure", "Animation",
+					"Children's", "Comedy", "Crime", "Documentary", "Drama",
+					"Fantasy", "Film-Noir", "Horror", "Musical", "Mystery",
+					"Romance", "Sci-Fi", "Thriller", "War", "Western" };
+			int offset = 6;
+			for (int i = offset; i < split.length; i++) {
+				int has = Integer.valueOf(split[i]).intValue();
+				if (has == 1) {
+					genres.add(genre[i - offset]);
+				}
+			}
+			result.add(new Movie(id, title, date, url, genres));
 		}
-		
+
 		return result;
 	}
 
-	public static List<Movie> importMoviesFromCrawlingResults(File file) throws IOException {
+	public static List<Movie> importMoviesFromCrawlingResults(File file)
+			throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		List<Movie> result = new ArrayList<Movie>();
 		String line = null;
 		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 		int lineNumber = 0;
-		while((line = reader.readLine()) != null) {
+		while ((line = reader.readLine()) != null) {
 			lineNumber++;
 			String[] split = line.split(";");
 			String id = split[0];
@@ -58,19 +73,19 @@ public class DataUtil {
 			try {
 				date = dateFormat.parse(split[2]);
 			} catch (ParseException e) {
-				System.out.println("WARNING: Could not parse date! " + file.getName() + ":" + lineNumber);
+				System.out.println("WARNING: Could not parse date! "
+						+ file.getName() + ":" + lineNumber);
 				date = new Date();
 			}
 			String url = split[3];
-			Movie movie = new Movie(id, title, date, url);
-			for(int i = 4; i < split.length; i++){
+			Movie movie = new Movie(id, title, date, url, null);
+			for (int i = 4; i < split.length; i++) {
 				movie.getKeywords().add(split[i]);
 			}
 			result.add(movie);
 		}
-		
+
 		return result;
 	}
 
-	
 }
