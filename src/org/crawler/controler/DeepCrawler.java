@@ -57,20 +57,20 @@ public class DeepCrawler extends Crawler {
 		String url = "";
 		List<String> genres = movie.getGenres();
 		//get all links with href.contains(/title/)
-		List<String> titleUrls = new ArrayList<String>();
-		for (Element link : source.getAllElements(HTMLElementName.A)) {
-			String value = link.getAttributeValue("href");
-			if (value != null && value.contains("imdb.com/title/")) {
-				titleUrls.add(value);
+		List<Element> searchResults = new ArrayList<Element>();
+		for (Element td : source.getAllElements(HTMLElementName.TD)) {
+			String classAtt = td.getAttributeValue("calss");
+			if (classAtt != null && classAtt.contains("detailed")) {
+				searchResults.add(td);
 			}
 		}
 		
 		double lastRelevance = 0.0;
-		for(String foundTitle : titleUrls){
-			List<String> extractedGenres = extractGenres(foundTitle);
+		for(Element resultRow : searchResults){
+			List<String> extractedGenres = extractGenres(resultRow);
 			double relevance = getRelevance(genres, extractedGenres);
 			if(relevance > lastRelevance){
-				url = foundTitle;
+				url = getTileUrl(resultRow);
 				lastRelevance = relevance;
 			}
 			
@@ -79,15 +79,43 @@ public class DeepCrawler extends Crawler {
 		return url;
 	}
 
-	private double getRelevance(List<String> genres,
-			List<String> extractedGenres) {
-		// TODO Auto-generated method stub
-		return 0;
+	private String getTileUrl(Element resultRow) {
+		String result = "";
+		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
+			String value = link.getAttributeValue("href");
+			if (value != null && value.contains("imdb.com/title/")) {
+				result = value;
+			}
+		}
+		return result;
 	}
 
-	private List<String> extractGenres(String foundTitle) {
-		// TODO Auto-generated method stub
-		return null;
+	private double getRelevance(List<String> movieGenres,
+			List<String> extractedGenres) {
+		int positive = 0;
+		int count = 0;
+		for(String movieGenre : movieGenres){
+			for(String extractedGenre : extractedGenres){
+				count++;
+				if(movieGenre.trim().equalsIgnoreCase(extractedGenre.trim())){
+					positive++;
+				}
+			}
+		}
+		
+		return (double)positive / (double)count;
+	}
+
+	private List<String> extractGenres(Element resultRow) {
+		List<String> extractedGenres = new ArrayList<String>();
+		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
+			String value = link.getAttributeValue("href");
+			if (value != null && value.contains("imdb.com/genre/")) {
+				String genre = value.substring(value.lastIndexOf("genre/"));
+				extractedGenres.add(genre);
+			}
+		}
+		return extractedGenres;
 	}
 
 	private String getYear(Date date) {
