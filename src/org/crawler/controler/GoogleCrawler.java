@@ -15,7 +15,7 @@ public class GoogleCrawler extends Crawler {
 
 	private static Logger logger = Logger.getLogger(GoogleCrawler.class.getPackage().getName());
 	
-	public GoogleCrawler(String baseUrl) {
+	public GoogleCrawler(String baseUrl) throws Exception {
 		super(baseUrl);
 	}
 
