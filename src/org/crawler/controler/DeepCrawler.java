@@ -40,7 +40,7 @@ public class DeepCrawler extends Crawler {
 		List<String> keywords = new ArrayList<String>();
 		Source source = readSite(createSearchQuery(movie));
 		String movieUrl = findMovieUrl(source, movie);
-		if(movieUrl.isEmpty()){
+		if (movieUrl.isEmpty()) {
 			return keywords;
 		}
 		return findSitesWithKeywords(readSite(movieUrl));
@@ -50,33 +50,36 @@ public class DeepCrawler extends Crawler {
 			throws UnsupportedEncodingException {
 		String normalTitle = getNormalTitle(movie.getTitle());
 		String year = getYear(movie.getDate());
-		String encodedParam = String.format("release_date=%s,%s&title=%s", year, year, URLEncoder.encode(normalTitle, "UTF-8"));
+		String encodedParam = String.format("release_date=%s,%s&title=%s",
+				year, year, URLEncoder.encode(normalTitle, "UTF-8"));
 		String url = "http://www.imdb.com/search/title?" + encodedParam;
 		return url;
 	}
 
-	private List<String> findSitesWithKeywords(Source movieSite) throws Exception {
-		List<String> keywords = new ArrayList<String>();
+	private List<String> findSitesWithKeywords(Source movieSite)
+			throws Exception {
 		List<String> queue = new ArrayList<String>();
 		for (Element link : movieSite.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			//filter by robots txt and title prefix
-			if(value != null && (value.contains("imdb.com/title") || value.contains("/title") && allowed(value))) {
+			// filter by robots txt and title prefix
+			if (value != null
+					&& (value.contains("imdb.com/title") || value
+							.contains("/title") && allowed(value))) {
 				queue.add(value);
 			}
 		}
-		
+
 		prioritizeUrls(queue);
 
-		for(String url : queue) {
-			ArrayList<String> words = findKeyWords(readSite(baseUrl+url));
-			if(words.size()>0) {
-				return words;
+		for (String url : queue) {
+			ArrayList<String> keywords = findKeyWords(readSite(baseUrl + url));
+			if (keywords.size() > 0) {
+				return keywords;
 			}
-			
+
 		}
-		
-		return keywords;
+
+		return new ArrayList<String>();
 	}
 
 	/**
@@ -88,25 +91,25 @@ public class DeepCrawler extends Crawler {
 			public int compare(String o1, String o2) {
 				boolean k1 = hasKeyword(o1);
 				boolean k2 = hasKeyword(o2);
-				if(k1 && !k2) {
+				if (k1 && !k2) {
 					return 1;
-				} else if(!k1 && k2) {
+				} else if (!k1 && k2) {
 					return -1;
 				}
 				return 0;
 			}
-			
+
 			private boolean hasKeyword(String o) {
 				return o.contains("keyword");
 			}
-			
+
 		});
 	}
 
 	private String findMovieUrl(Source source, Movie movie) {
 		String url = "";
 		List<String> genres = movie.getGenres();
-		//get all links with href.contains(/title/)
+		// get all links with href.contains(/title/)
 		List<Element> searchResults = new ArrayList<Element>();
 		for (Element td : source.getAllElements(HTMLElementName.TD)) {
 			String classAtt = td.getAttributeValue("calss");
@@ -114,18 +117,18 @@ public class DeepCrawler extends Crawler {
 				searchResults.add(td);
 			}
 		}
-		
+
 		double lastRelevance = 0.0;
-		for(Element resultRow : searchResults){
+		for (Element resultRow : searchResults) {
 			List<String> extractedGenres = extractGenres(resultRow);
 			double relevance = getRelevance(genres, extractedGenres);
-			if(relevance > lastRelevance){
+			if (relevance > lastRelevance) {
 				url = getTileUrl(resultRow);
 				lastRelevance = relevance;
 			}
-			
+
 		}
-		//go into link
+		// go into link
 		return url;
 	}
 
@@ -144,16 +147,16 @@ public class DeepCrawler extends Crawler {
 			List<String> extractedGenres) {
 		int positive = 0;
 		int count = 0;
-		for(String movieGenre : movieGenres){
-			for(String extractedGenre : extractedGenres){
+		for (String movieGenre : movieGenres) {
+			for (String extractedGenre : extractedGenres) {
 				count++;
-				if(movieGenre.trim().equalsIgnoreCase(extractedGenre.trim())){
+				if (movieGenre.trim().equalsIgnoreCase(extractedGenre.trim())) {
 					positive++;
 				}
 			}
 		}
-		
-		return (double)positive / (double)count;
+
+		return (double) positive / (double) count;
 	}
 
 	private List<String> extractGenres(Element resultRow) {
