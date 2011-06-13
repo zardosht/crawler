@@ -48,41 +48,58 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		configureLogger();
 		
 		if (args.length > 0 && args[0].equals("--gui")) {
-			logger.info("GUI started.");
-			File file = new File("results/c1.result");
-			List<Movie> movies = DataUtil
-					.importMoviesFromCrawlingResults(file);
-			logger.info("Extracted movies form result file: "  + file.getName());
-			openGUI(movies);
+			configureLogger("results/gui.log.txt");
+			openGui();
 		} else {
-			logger.info("Google Crawling started.");
-			File resultsFile = new File("results/c1.result");
-			logger.info("Writing results to file: " + resultsFile.getName());
-			CSVWriter csvWriter = new CSVWriter(resultsFile,
-					Arrays.asList("id", "title", "date", "url", "keywords"));
-			File itemsFile = new File("data/u.item");
-			logger.info("Importing movies from file: " + itemsFile.getName());
-			List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
-
-			GoogleCrawler crawler = new GoogleCrawler("http://imdb.com");
-
-			for (Movie movie : movies) {
-				List<String> keywords = crawler.getKeywords(movie);
-				for (String keyword : keywords) {
-					movie.getKeywords().add(keyword);
-				}
-				logger.info("Keywords extarcted for: " + movie.getTitle());
-				writeCrawlerResult(csvWriter, movie);
-				System.out.println(movie.toString());
-				logger.info("Wrote record to result file: " + movie.toString());
-			}
-			csvWriter.close();
-			logger.info("Google crawling finished.");
+			configureLogger("results/c1.google.log.txt");
+			startGoogleCrawler();
+			
+			configureLogger("results/c2.deep.log.txt");
+			startDeepCrawler();
 		}
 
+	}
+
+	private static void startDeepCrawler() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void openGui() throws IOException {
+		logger.info("GUI started.");
+		File file = new File("results/c1.result");
+		List<Movie> movies = DataUtil
+				.importMoviesFromCrawlingResults(file);
+		logger.info("Extracted movies form result file: "  + file.getName());
+		openGUI(movies);
+	}
+
+	private static void startGoogleCrawler() throws IOException, Exception {
+		logger.info("Google Crawling started.");
+		File resultsFile = new File("results/c1.result");
+		logger.info("Writing results to file: " + resultsFile.getName());
+		CSVWriter csvWriter = new CSVWriter(resultsFile,
+				Arrays.asList("id", "title", "date", "url", "keywords"));
+		File itemsFile = new File("data/u.item");
+		logger.info("Importing movies from file: " + itemsFile.getName());
+		List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
+
+		GoogleCrawler crawler = new GoogleCrawler("http://imdb.com");
+
+		for (Movie movie : movies) {
+			List<String> keywords = crawler.getKeywords(movie);
+			for (String keyword : keywords) {
+				movie.getKeywords().add(keyword);
+			}
+			logger.info("Keywords extarcted for: " + movie.getTitle());
+			writeCrawlerResult(csvWriter, movie);
+			System.out.println(movie.toString());
+			logger.info("Wrote record to result file: " + movie.toString());
+		}
+		csvWriter.close();
+		logger.info("Google crawling finished.");
 	}
 
 	public static void writeCrawlerResult(CSVWriter csvWriter, Movie movie)
@@ -217,10 +234,10 @@ public class Main {
 		display.dispose();
 	}
 
-	private static void configureLogger() {
+	private static void configureLogger(String logFileName) {
 		logger.setUseParentHandlers(false);
 		try {
-			FileHandler fileHandler = new FileHandler("results/log.txt");
+			FileHandler fileHandler = new FileHandler(logFileName);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fileHandler.setFormatter(formatter);
 			logger.addHandler(fileHandler);
