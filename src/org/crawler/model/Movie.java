@@ -12,13 +12,17 @@ public class Movie {
 	private Date date;
 	private String url;
 	private List<String> keywords;
+	private List<String> genres;
+	
+
 	private String keywordsString;
 	
-	public Movie(String id, String title, Date date, String url) {
+	public Movie(String id, String title, Date date, String url, List<String> genres) {
 		this.id = id;
 		this.title = title;
 		this.date = date;
 		this.url = url;
+		this.genres = genres;
 		keywords = new ArrayList<String>();
 	}
 	
@@ -73,6 +77,10 @@ public class Movie {
 			keywordsString = sb.toString();
 		}
 		return keywordsString;
+	}
+
+	public List<String> getGenres() {
+		return genres;
 	}
 
 
