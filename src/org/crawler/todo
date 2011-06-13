@@ -1,14 +1,6 @@
-
-2. take the movie title from items file
-3. goto http://imdb.com/title
-4. follow all links and see if they have anchors with class=keyword in follwing page (links that have "keyword" in their href or text have priority). 
-5. do it for 2 levels
-6. do a breadth first search
-7. stop when found a page that contains anchors with class=keyword
-
-8. FOR BOTH
-evaluatio:  coverage, how many of 1608 items have got a keyword.
-			harvest rate: #visited related pages / #visited pages
+1. GUI (show info, refresh)
+2. run
+3. package
 
 
  
