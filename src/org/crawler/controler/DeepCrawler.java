@@ -1,6 +1,5 @@
 package org.crawler.controler;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DeepCrawler extends Crawler {
 
 	public List<String> getKeywords(Movie movie) throws Exception {
 		String normalTitle = getNormalTitle(movie.getTitle());
-//		String year = getYear(movie.getDate());
+		String year = getYear(movie.getDate());
 //		String encodedParam = URLEncoder.encode(
 //				String.format("release_date=%s,%s&title=%s", year, year, normalTitle)
 //				, "UTF-8");
@@ -59,12 +58,12 @@ public class DeepCrawler extends Crawler {
 	private String getNormalTitle(String title) {
 		// replace the, a, an, ...
 		String result = title;
-		result.replaceAll("([^()]+)", "");
+		result = result.replaceAll("\\(.*\\)", "");
 		String[] putToFront = new String[]{", the", ", a", ", an"};
 		for(int i = 0; i < putToFront.length; i++){
 			if(title.toLowerCase().contains(putToFront[i])){
 				result = result.toLowerCase().replace(putToFront[i], "");
-				result += putToFront[i] + " ";
+				result = putToFront[i].replace(", ", "") + " " + result;
 			}
 		}
 		

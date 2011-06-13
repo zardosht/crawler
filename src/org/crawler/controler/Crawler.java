@@ -1,7 +1,6 @@
 package org.crawler.controler;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -9,7 +8,6 @@ import java.util.logging.Logger;
 import net.htmlparser.jericho.Source;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -17,7 +15,7 @@ public class Crawler {
 
 	private static Logger logger = Logger.getLogger(Crawler.class.getPackage().getName());
 	
-	public static long TIMEOUT = 3000; //1 second
+	public static long TIMEOUT = 3000; //3 second
 	
 	private long lastCrawl = 0;
 
