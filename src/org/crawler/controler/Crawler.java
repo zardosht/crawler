@@ -1,15 +1,14 @@
 package org.crawler.controler;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -24,10 +23,15 @@ public class Crawler {
 	private DefaultHttpClient client;
 
 	private ArrayList<String> disallow;
+
+	private int totalSites;
+	private int relevantSites;
 	
 	public Crawler(String baseUrl) throws Exception {
 		client = new DefaultHttpClient();
 		intRobotsTxtFilter(baseUrl);
+		totalSites = 0;
+		relevantSites = 0;
 	}
 
 	private void intRobotsTxtFilter(String baseUrl) throws Exception {
@@ -79,9 +83,23 @@ public class Crawler {
 		System.out.println(response);
 		logger.info("Response: " + response);
 		
+		totalSites++;
+		
 		Source source = new Source(response.getEntity().getContent());
 		source.setLogger(null);
 		return source;
+	}
+
+	protected ArrayList<String> findKeyWords(Source keyWordSite) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (Element b : keyWordSite.getAllElementsByClass("keyword")) {
+			Element anker = b.getFirstElement();
+			if (anker != null) {
+				result.add(anker.getTextExtractor().toString());
+			}
+		}
+		if(result.size()>0) relevantSites++;
+		return result;
 	}
 	
 }

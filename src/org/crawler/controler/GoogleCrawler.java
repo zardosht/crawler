@@ -20,19 +20,16 @@ public class GoogleCrawler extends Crawler {
 	}
 
 	public List<String> getKeywords(Movie movie) throws Exception {
-		ArrayList<String> result = new ArrayList<String>();
 		logger.info("Querying Google for movie: " + movie.getTitle());
 		String movieUrl = getMovieUrlFromGoogle(movie);
 		System.out.println(movieUrl);
 		logger.info("Retrieved movei URL from Google: " + movieUrl);
+		ArrayList<String> result;
 		if (!movieUrl.isEmpty()) {
 			Source keyWordSite = readSite(movieUrl + "keywords");
-			for (Element b : keyWordSite.getAllElementsByClass("keyword")) {
-				Element anker = b.getFirstElement();
-				if (anker != null) {
-					result.add(anker.getTextExtractor().toString());
-				}
-			}
+			result = findKeyWords(keyWordSite);
+		} else {
+			result = new ArrayList<String>();
 		}
 		logger.info("Retrieved keywords: " + result);
 		return result;
