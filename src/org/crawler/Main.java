@@ -63,7 +63,7 @@ public class Main {
 
 	}
 
-	private static void startDeepCrawler() throws IOException {
+	private static void startDeepCrawler() throws Exception {
 		logger.info("Deep Crawling started.");
 		File resultsFile = new File("results/c2.deep.result");
 		logger.info("Writing results to file: " + resultsFile.getName());
