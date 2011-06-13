@@ -34,6 +34,7 @@ public class DeepCrawler extends Crawler {
 
 	public DeepCrawler(String baseUrl) throws Exception {
 		super(baseUrl);
+		TIMEOUT = 500;
 	}
 
 	public List<String> getKeywords(Movie movie) throws Exception {
@@ -43,7 +44,7 @@ public class DeepCrawler extends Crawler {
 		if (movieUrl.isEmpty()) {
 			return keywords;
 		}
-		return findSitesWithKeywords(readSite(movieUrl));
+		return findSitesWithKeywords(readSite(movieUrl),movieUrl);
 	}
 
 	private String createSearchQuery(Movie movie)
@@ -56,27 +57,27 @@ public class DeepCrawler extends Crawler {
 		return url;
 	}
 
-	private List<String> findSitesWithKeywords(Source movieSite)
+	private List<String> findSitesWithKeywords(Source movieSite, String currentUrl)
 			throws Exception {
 		List<String> queue = new ArrayList<String>();
 		for (Element link : movieSite.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			// filter by robots txt and title prefix
-			if (value != null
-					&& (value.contains("imdb.com/title") || value
-							.contains("/title") && allowed(value))) {
+			// filter by robots txt 
+			if (value != null && allowed(value)) {
 				queue.add(value);
 			}
 		}
 
 		prioritizeUrls(queue);
 
-		for (String url : queue) {
-			ArrayList<String> keywords = findKeyWords(readSite(baseUrl + url));
+		int searchlimit = 15;
+		for (String partUrl : queue) {
+			String url = (partUrl.startsWith("/"))?baseUrl+partUrl:currentUrl+partUrl;
+			ArrayList<String> keywords = findKeyWords(readSite(url));
 			if (keywords.size() > 0) {
 				return keywords;
 			}
-
+			if(searchlimit--<=0) break;
 		}
 
 		return new ArrayList<String>();
@@ -92,9 +93,9 @@ public class DeepCrawler extends Crawler {
 				boolean k1 = hasKeyword(o1);
 				boolean k2 = hasKeyword(o2);
 				if (k1 && !k2) {
-					return 1;
-				} else if (!k1 && k2) {
 					return -1;
+				} else if (!k1 && k2) {
+					return 1;
 				}
 				return 0;
 			}
@@ -109,7 +110,6 @@ public class DeepCrawler extends Crawler {
 	private String findMovieUrl(Source source, Movie movie) {
 		String url = "";
 		List<String> genres = movie.getGenres();
-		// get all links with href.contains(/title/)
 		List<Element> searchResults = new ArrayList<Element>();
 		for (Element td : source.getAllElements(HTMLElementName.TR)) {
 			String classAtt = td.getAttributeValue("class");
@@ -123,7 +123,7 @@ public class DeepCrawler extends Crawler {
 			List<String> extractedGenres = extractGenres(resultRow);
 			double relevance = getRelevance(genres, extractedGenres);
 			if (relevance > lastRelevance) {
-				url = getTileUrl(resultRow);
+				url = baseUrl+getTileUrl(resultRow);
 				lastRelevance = relevance;
 			}
 
@@ -133,23 +133,22 @@ public class DeepCrawler extends Crawler {
 	}
 
 	private String getTileUrl(Element resultRow) {
-		String result = "";
 		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			if (value != null && value.contains("imdb.com/title/")) {
-				result = value;
+			if (value != null && value.contains("/title/")) {
+				return value;
 			}
 		}
-		return result;
+		return "";
 	}
 
 	private double getRelevance(List<String> movieGenres,
 			List<String> extractedGenres) {
 		int positive = 0;
 		int count = 0;
-		for (String movieGenre : movieGenres) {
-			for (String extractedGenre : extractedGenres) {
-				count++;
+		for (String extractedGenre : extractedGenres) {
+			count++;
+			for (String movieGenre : movieGenres) {
 				if (movieGenre.trim().equalsIgnoreCase(extractedGenre.trim())) {
 					positive++;
 				}
@@ -163,8 +162,8 @@ public class DeepCrawler extends Crawler {
 		List<String> extractedGenres = new ArrayList<String>();
 		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			if (value != null && value.contains("imdb.com/genre/")) {
-				String genre = value.substring(value.lastIndexOf("genre/"));
+			if (value != null && value.contains("/genre/")) {
+				String genre = value.substring(value.lastIndexOf("/") + 1);
 				extractedGenres.add(genre);
 			}
 		}

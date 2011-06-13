@@ -17,6 +17,7 @@ public class GoogleCrawler extends Crawler {
 	
 	public GoogleCrawler(String baseUrl) throws Exception {
 		super(baseUrl);
+		TIMEOUT = 3000;
 	}
 
 	public List<String> getKeywords(Movie movie) throws Exception {
