@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -42,7 +43,7 @@ public class GoogleCrawler extends Crawler {
 		Source source = readSite("http://google.com/search?q=" + encodedTitle);
 		for (Element link : source.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
-			if (value != null && value.contains("imdb.com/title/")) {
+			if (value != null && Pattern.matches("http:\\/\\/www\\.imdb\\.com\\/title\\/[a-zA-Z0-9]*\\/", value)) {
 				return value;
 			}
 		}
