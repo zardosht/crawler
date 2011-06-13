@@ -58,8 +58,8 @@ public class DeepCrawler extends Crawler {
 		List<String> genres = movie.getGenres();
 		//get all links with href.contains(/title/)
 		List<Element> searchResults = new ArrayList<Element>();
-		for (Element td : source.getAllElements(HTMLElementName.TD)) {
-			String classAtt = td.getAttributeValue("calss");
+		for (Element td : source.getAllElements(HTMLElementName.TR)) {
+			String classAtt = td.getAttributeValue("class");
 			if (classAtt != null && classAtt.contains("detailed")) {
 				searchResults.add(td);
 			}
