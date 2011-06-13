@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.crawler.controler.DeepCrawler;
 import org.crawler.controler.GoogleCrawler;
 import org.crawler.model.CSVWriter;
 import org.crawler.model.DataUtil;
@@ -62,14 +63,35 @@ public class Main {
 
 	}
 
-	private static void startDeepCrawler() {
-		// TODO Auto-generated method stub
-		
+	private static void startDeepCrawler() throws IOException {
+		logger.info("Deep Crawling started.");
+		File resultsFile = new File("results/c2.deep.result");
+		logger.info("Writing results to file: " + resultsFile.getName());
+		CSVWriter csvWriter = new CSVWriter(resultsFile,
+				Arrays.asList("id", "title", "date", "url", "keywords"));
+		File itemsFile = new File("data/u.item");
+		logger.info("Importing movies from file: " + itemsFile.getName());
+		List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
+
+		DeepCrawler crawler = new DeepCrawler("http://imdb.com");
+
+		for (Movie movie : movies) {
+			List<String> keywords = crawler.getKeywords(movie);
+			for (String keyword : keywords) {
+				movie.getKeywords().add(keyword);
+			}
+			logger.info("Keywords extarcted for: " + movie.getTitle());
+			writeCrawlerResult(csvWriter, movie);
+			System.out.println(movie.toString());
+			logger.info("Wrote record to result file: " + movie.toString());
+		}
+		csvWriter.close();
+		logger.info("Google crawling finished.");
 	}
 
 	private static void openGui() throws IOException {
 		logger.info("GUI started.");
-		File file = new File("results/c1.result");
+		File file = new File("results/c1.google.result");
 		List<Movie> movies = DataUtil
 				.importMoviesFromCrawlingResults(file);
 		logger.info("Extracted movies form result file: "  + file.getName());
@@ -78,7 +100,7 @@ public class Main {
 
 	private static void startGoogleCrawler() throws IOException, Exception {
 		logger.info("Google Crawling started.");
-		File resultsFile = new File("results/c1.result");
+		File resultsFile = new File("results/c1.google.result");
 		logger.info("Writing results to file: " + resultsFile.getName());
 		CSVWriter csvWriter = new CSVWriter(resultsFile,
 				Arrays.asList("id", "title", "date", "url", "keywords"));
