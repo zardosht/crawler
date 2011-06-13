@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.crawler.model.Movie;
@@ -31,14 +33,18 @@ public class DeepCrawler extends Crawler {
 	}
 
 	public List<String> getKeywords(Movie movie) throws Exception {
+		List<String> keywords = new ArrayList<String>();
 		String normalTitle = getNormalTitle(movie.getTitle());
 		String year = getYear(movie.getDate());
 		String encodedParam = String.format("release_date=%s,%s&title=%s", year, year, URLEncoder.encode(normalTitle, "UTF-8"));
 		String url = "http://www.imdb.com/search/title?" + encodedParam;
 		Source source = readSite(url);
 		String movieUrl = findMovieUrl(source, movie);
-		// Source movieSite = readSite(movieUrl);
-		List<String> keywords = extractKeywords(null);
+		if(movieUrl.isEmpty()){
+			return keywords;
+		}
+		Source movieSite = readSite(movieUrl);
+		keywords = extractKeywords(movieSite);
 		return keywords;
 	}
 
@@ -49,6 +55,27 @@ public class DeepCrawler extends Crawler {
 
 	private String findMovieUrl(Source source, Movie movie) {
 		String url = "";
+		List<String> genres = movie.getGenres();
+		//get all links with href.contains(/title/)
+		List<String> titleUrls = new ArrayList<String>();
+		for (Element link : source.getAllElements(HTMLElementName.A)) {
+			String value = link.getAttributeValue("href");
+			if (value != null && value.contains("imdb.com/title/")) {
+				titleUrls.add(value);
+			}
+		}
+		
+		double lastRelevance = 0.0;
+		for(String foundTitle : titleUrls){
+			List<String> extractedGenres = extractGenres(foundTitle);
+			double relevance = getRelevance(genres, extractedGenres);
+			if(relevance > lastRelevance){
+				url = foundTitle;
+				lastRelevance = relevance;
+			}
+			
+		}
+		//go into link
 		return url;
 	}
 
