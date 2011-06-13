@@ -1,12 +1,16 @@
 package org.crawler.controler;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.PriorityQueue;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -34,23 +38,69 @@ public class DeepCrawler extends Crawler {
 
 	public List<String> getKeywords(Movie movie) throws Exception {
 		List<String> keywords = new ArrayList<String>();
-		String normalTitle = getNormalTitle(movie.getTitle());
-		String year = getYear(movie.getDate());
-		String encodedParam = String.format("release_date=%s,%s&title=%s", year, year, URLEncoder.encode(normalTitle, "UTF-8"));
-		String url = "http://www.imdb.com/search/title?" + encodedParam;
-		Source source = readSite(url);
+		Source source = readSite(createSearchQuery(movie));
 		String movieUrl = findMovieUrl(source, movie);
 		if(movieUrl.isEmpty()){
 			return keywords;
 		}
-		Source movieSite = readSite(movieUrl);
-		keywords = extractKeywords(movieSite);
+		return findSitesWithKeywords(readSite(movieUrl));
+	}
+
+	private String createSearchQuery(Movie movie)
+			throws UnsupportedEncodingException {
+		String normalTitle = getNormalTitle(movie.getTitle());
+		String year = getYear(movie.getDate());
+		String encodedParam = String.format("release_date=%s,%s&title=%s", year, year, URLEncoder.encode(normalTitle, "UTF-8"));
+		String url = "http://www.imdb.com/search/title?" + encodedParam;
+		return url;
+	}
+
+	private List<String> findSitesWithKeywords(Source movieSite) throws Exception {
+		List<String> keywords = new ArrayList<String>();
+		List<String> queue = new ArrayList<String>();
+		for (Element link : movieSite.getAllElements(HTMLElementName.A)) {
+			String value = link.getAttributeValue("href");
+			//filter by robots txt and title prefix
+			if(value != null && (value.contains("imdb.com/title") || value.contains("/title") && allowed(value))) {
+				queue.add(value);
+			}
+		}
+		
+		prioritizeUrls(queue);
+
+		for(String url : queue) {
+			ArrayList<String> words = findKeyWords(readSite(baseUrl+url));
+			if(words.size()>0) {
+				return words;
+			}
+			
+		}
+		
 		return keywords;
 	}
 
-	private List<String> extractKeywords(Source movieSite) {
-		List<String> keywords = new ArrayList<String>();
-		return keywords;
+	/**
+	 * URLs containing "keyword" should be searched first
+	 */
+	private void prioritizeUrls(List<String> queue) {
+		Collections.sort(queue, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				boolean k1 = hasKeyword(o1);
+				boolean k2 = hasKeyword(o2);
+				if(k1 && !k2) {
+					return 1;
+				} else if(!k1 && k2) {
+					return -1;
+				}
+				return 0;
+			}
+			
+			private boolean hasKeyword(String o) {
+				return o.contains("keyword");
+			}
+			
+		});
 	}
 
 	private String findMovieUrl(Source source, Movie movie) {

@@ -22,12 +22,15 @@ public class Crawler {
 
 	private DefaultHttpClient client;
 
-	private ArrayList<String> disallow;
+	protected ArrayList<String> disallow;
 
 	private int totalSites;
 	private int relevantSites;
+
+	protected final String baseUrl;
 	
 	public Crawler(String baseUrl) throws Exception {
+		this.baseUrl = baseUrl;
 		client = new DefaultHttpClient();
 		intRobotsTxtFilter(baseUrl);
 		totalSites = 0;
@@ -100,6 +103,15 @@ public class Crawler {
 		}
 		if(result.size()>0) relevantSites++;
 		return result;
+	}
+
+	protected boolean allowed(String value) {
+		for(String disallowed : disallow) {
+			if(value.startsWith(baseUrl+disallowed) || value.startsWith(disallowed)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

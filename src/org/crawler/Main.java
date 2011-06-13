@@ -73,7 +73,7 @@ public class Main {
 		logger.info("Importing movies from file: " + itemsFile.getName());
 		List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
 
-		DeepCrawler crawler = new DeepCrawler("http://imdb.com");
+		DeepCrawler crawler = new DeepCrawler("http://www.imdb.com");
 
 		for (Movie movie : movies) {
 			List<String> keywords = crawler.getKeywords(movie);
@@ -108,7 +108,7 @@ public class Main {
 		logger.info("Importing movies from file: " + itemsFile.getName());
 		List<Movie> movies = DataUtil.importMoviesFromFile(itemsFile);
 
-		GoogleCrawler crawler = new GoogleCrawler("http://imdb.com");
+		GoogleCrawler crawler = new GoogleCrawler("http://www.imdb.com");
 
 		for (Movie movie : movies) {
 			List<String> keywords = crawler.getKeywords(movie);
