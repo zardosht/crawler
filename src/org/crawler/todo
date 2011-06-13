@@ -8,7 +8,9 @@
 7. stop when found a page that contains anchors with class=keyword
 
 8. FOR BOTH
-evaluatio: coverage, how many of 1608 items have got a keyword.
+evaluatio:  coverage, how many of 1608 items have got a keyword.
+			harvest rate: #visited related pages / #visited pages
+
 
 :D
 berim ye sigar bekeshim! Tamam
