@@ -36,6 +36,9 @@ public class DeepCrawler extends Crawler {
 		TIMEOUT = 500;
 	}
 
+	/**
+	 * Returns keywords for a give movie.
+	 */
 	public List<String> getKeywords(Movie movie) throws Exception {
 		List<String> keywords = new ArrayList<String>();
 		Source source = readSite(createSearchQuery(movie));
@@ -46,6 +49,9 @@ public class DeepCrawler extends Crawler {
 		return findSitesWithKeywords(readSite(movieUrl), movieUrl);
 	}
 
+	/**
+	 * Creates a search query for the movie using IMDB search
+	 */
 	private String createSearchQuery(Movie movie)
 			throws UnsupportedEncodingException {
 		String normalTitle = getNormalTitle(movie.getTitle());
@@ -56,6 +62,11 @@ public class DeepCrawler extends Crawler {
 		return url;
 	}
 
+	/**
+	 * Collects all links on the site and adds them to the queue. It then
+	 * prioritizes and follows the links until keywords are found or the break
+	 * condition is hit.
+	 */
 	private List<String> findSitesWithKeywords(Source movieSite,
 			String currentUrl) throws Exception {
 		List<String> queue = new ArrayList<String>();
@@ -108,6 +119,10 @@ public class DeepCrawler extends Crawler {
 		});
 	}
 
+	/**
+	 * Looks for the right movie url on the search result page. uses genre to
+	 * determine the relevance of the search results.
+	 */
 	private String findMovieUrl(Source source, Movie movie) {
 		String url = "";
 		List<String> genres = movie.getGenres();
@@ -133,6 +148,9 @@ public class DeepCrawler extends Crawler {
 		return url;
 	}
 
+	/**
+	 * looks for urls pointing to a movie.
+	 */
 	private String getTileUrl(Element resultRow) {
 		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
 			String value = link.getAttributeValue("href");
@@ -143,6 +161,9 @@ public class DeepCrawler extends Crawler {
 		return "";
 	}
 
+	/**
+	 * Calculates the relevance by comparing genres 
+	 */
 	private double getRelevance(List<String> movieGenres,
 			List<String> extractedGenres) {
 		int positive = 0;
@@ -159,6 +180,9 @@ public class DeepCrawler extends Crawler {
 		return (double) positive / (double) count;
 	}
 
+	/**
+	 * Extracts genres from the search result
+	 */
 	private List<String> extractGenres(Element resultRow) {
 		List<String> extractedGenres = new ArrayList<String>();
 		for (Element link : resultRow.getAllElements(HTMLElementName.A)) {
@@ -177,6 +201,10 @@ public class DeepCrawler extends Crawler {
 		return result;
 	}
 
+	/**
+	 * Cleans up movie titles from original source in order to imporve search results.
+	 * For example "Movie, The" is converted in to "The Movie"
+	 */
 	private String getNormalTitle(String title) {
 		// replace the, a, an, ...
 		String result = title;
@@ -188,7 +216,6 @@ public class DeepCrawler extends Crawler {
 				result = putToFront[i].replace(", ", "") + " " + result;
 			}
 		}
-
 		return result.trim();
 	}
 
