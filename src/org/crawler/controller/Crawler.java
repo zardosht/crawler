@@ -39,6 +39,9 @@ public class Crawler {
 		relevantSites = 0;
 	}
 
+	/**
+	 * Reads the robots.txt of the given baseUrl and extracts the disallow rules
+	 */
 	private void intRobotsTxtFilter(String baseUrl) throws Exception {
 		disallow = new ArrayList<String>();
 		HttpGet get = new HttpGet(baseUrl + "/robots.txt");
@@ -67,6 +70,10 @@ public class Crawler {
 		}
 	}
 
+	/**
+	 * Ensures that the defined timeout is respected. Puts the thread to sleep
+	 * if timeout threshold isn't reached yet.
+	 */
 	protected void timeOut() {
 		long timeDifference = System.currentTimeMillis() - lastCrawl;
 		if (timeDifference < TIMEOUT) {
@@ -82,6 +89,10 @@ public class Crawler {
 		return client;
 	}
 
+	/**
+	 * Creates a http get request for the given url and returns a jericho parser
+	 * source element.
+	 */
 	protected Source readSite(String url) throws Exception {
 		timeOut();
 		logger.info("Retrieving: " + url);
@@ -97,6 +108,10 @@ public class Crawler {
 		return source;
 	}
 
+	/**
+	 * Searches for keywords. Keywords are identified by elements with the class
+	 * "keyword"
+	 */
 	protected ArrayList<String> findKeyWords(Source keyWordSite) {
 		ArrayList<String> result = new ArrayList<String>();
 		for (Element b : keyWordSite.getAllElementsByClass("keyword")) {
@@ -110,6 +125,9 @@ public class Crawler {
 		return result;
 	}
 
+	/**
+	 * Checks a URL vs the disallow list which was extracted from the robots.txt
+	 */
 	protected boolean allowed(String value) {
 		for (String disallowed : disallow) {
 			if (value.startsWith(baseUrl + disallowed)
@@ -120,10 +138,16 @@ public class Crawler {
 		return true;
 	}
 
+	/**
+     * Returns # of visited sites
+     */
 	public int getVisited() {
 		return totalSites;
 	}
 
+	/**
+	 * Returns # of visited sites which contained keywords 
+	 */
 	public int getVisitedRelevant() {
 		return relevantSites;
 	}
