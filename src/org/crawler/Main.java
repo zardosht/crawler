@@ -14,12 +14,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.io.FileUtils;
 import org.crawler.controller.Crawler;
 import org.crawler.controller.DeepCrawler;
 import org.crawler.controller.GoogleCrawler;
 import org.crawler.model.CSVWriter;
 import org.crawler.model.DataUtil;
 import org.crawler.model.Movie;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,6 +34,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,8 +55,6 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-
-		
 		if (args.length > 0 && args[0].equals("--crawler")) {
 			if(args.length == 3 && (args[1].equals("google") || args[1].equals("imdb")) && (args[2].equals("google") || args[2].equals("imdb")) ){
 				configureLogger("results/c2.deep.log.txt");
@@ -184,7 +186,7 @@ public class Main {
 
 	private static void openGUI(List<Movie> movies) {
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(4, false));
 
 		Label lblCrawler = new Label(shell, SWT.NONE);
@@ -192,7 +194,7 @@ public class Main {
 				false));
 		lblCrawler.setText("Crawler: ");
 
-		Combo cmbCrawler = new Combo(shell, SWT.DROP_DOWN);
+		final Combo cmbCrawler = new Combo(shell, SWT.DROP_DOWN);
 		cmbCrawler
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		cmbCrawler.setItems(new String[] { "Google (C1)",
@@ -207,6 +209,34 @@ public class Main {
 		btnInfo.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 				false));
 		btnInfo.setText("Crawler Info");
+		btnInfo.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int index = cmbCrawler.getSelectionIndex();
+				String title = "";
+				String eval = "";
+				try{
+					if(index == 0){
+						//google
+						eval = FileUtils.readFileToString(new File("results/c1.google.eval"));
+						title = "Google Form Completion Crawler - Evaluation";
+					}else if(index == 1){
+						//imdb
+						eval = FileUtils.readFileToString(new File("results/c2.deep.eval"));
+						title = "IMDB Deep Crawler - Evaluation";
+					}
+				}catch (IOException exception){
+					exception.printStackTrace();
+				}
+				if(!title.isEmpty()){
+					MessageDialog.openInformation(shell, title, eval);
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		Label lblKeywords = new Label(shell, SWT.NONE);
 		lblKeywords.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
@@ -291,6 +321,7 @@ public class Main {
 		}
 		display.dispose();
 	}
+
 
 	private static void configureLogger(String logFileName) {
 		logger.setUseParentHandlers(false);
