@@ -53,15 +53,24 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 
 		
-		if (args.length > 0 && args[0].equals("--gui")) {
+		if (args.length > 0 && args[0].equals("--crawler")) {
+			if(args.length == 3 && (args[1].equals("google") || args[1].equals("imdb")) && (args[2].equals("google") || args[2].equals("imdb")) ){
+				configureLogger("results/c2.deep.log.txt");
+				startDeepCrawler();
+				configureLogger("results/c1.google.log.txt");
+				startGoogleCrawler();
+			}else if(args.length == 2 && args[1].equals("google")){
+				configureLogger("results/c1.google.log.txt");
+				startGoogleCrawler();
+			}else if(args.length == 2 && args[1].equals("imdb")){
+				configureLogger("results/c2.deep.log.txt");
+				startDeepCrawler();
+			}else{
+				System.out.println("Usage: java -jar crawler.jar --crawl google imdb");
+			}
+		} else {
 			configureLogger("results/gui.log.txt");
 			openGui();
-		} else {
-			configureLogger("results/c1.google.log.txt");
-			startGoogleCrawler();
-			
-			configureLogger("results/c2.deep.log.txt");
-			startDeepCrawler();
 		}
 
 	}
