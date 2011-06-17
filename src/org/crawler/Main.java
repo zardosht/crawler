@@ -136,7 +136,7 @@ public class Main {
 		fw.write(System.getProperty("line.separator"));
 		fw.write("Visted Relevant Pages: " + String.format("%d", visitedRelevant));
 		fw.write(System.getProperty("line.separator"));
-		fw.write("Coverage: " + String.format("%.3f", coverage));
+		fw.write("Coverage: " + String.format("%.3f (found keywords for %d items out of %d)", coverage, visitedRelevant, numMovies));
 		fw.write(System.getProperty("line.separator"));
 		fw.write("Harvest Rate: " + String.format("%.3f", harvestRate));
 		fw.close();

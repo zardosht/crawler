@@ -34,7 +34,7 @@ public class CrawlerGui {
 	
 	private ListViewer lvMovies;
 
-	public void openGUI(final List<Movie> googleMovies, List<Movie> imdbMovies) {
+	public void openGUI(final List<Movie> googleMovies, final List<Movie> imdbMovies) {
 		Display display = new Display();
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(4, false));
@@ -58,7 +58,7 @@ public class CrawlerGui {
 				if(selectionIndex == 0){
 					lvMovies.setInput(googleMovies);
 				}else if(selectionIndex == 1){
-					lvMovies.setInput(googleMovies);
+					lvMovies.setInput(imdbMovies);
 				}
 				
 			}
@@ -110,14 +110,12 @@ public class CrawlerGui {
 		lblKeywords.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
 				false, false));
 		lblKeywords.setText("Keywords Filter: ");
-		lblKeywords.setToolTipText("Use quotes for exact match.");
 
 		final Text txtKeywords = new Text(shell, SWT.SINGLE | SWT.LEAD
 				| SWT.BORDER);
 		txtKeywords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 3, 1));
 		txtKeywords.setText("");
-		txtKeywords.setToolTipText("Use quotes for exact match.");
 
 		lvMovies = new ListViewer(shell, SWT.BORDER
 				| SWT.V_SCROLL | SWT.H_SCROLL);
