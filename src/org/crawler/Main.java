@@ -66,9 +66,11 @@ public class Main {
 
 		DeepCrawler crawler = new DeepCrawler("http://www.imdb.com");
 
+		System.out.println("Extracting keywords for " + movies.size() + " items");
+		int i = 1;
 		for (Movie movie : movies) {
 			List<String> keywords = crawler.getKeywords(movie);
-			System.out.println("IMDB: Keywords for " + movie.getTitle() + " : " + keywords);
+			System.out.println(i++ + ".IMDB: Keywords for " + movie.getTitle() + " : " + keywords);
 			for (String keyword : keywords) {
 				movie.getKeywords().add(keyword);
 			}
@@ -108,9 +110,11 @@ public class Main {
 
 		GoogleCrawler crawler = new GoogleCrawler("http://www.imdb.com");
 
+		System.out.println("Extracting keywords for " + movies.size() + " items");
+		int i = 1;
 		for (Movie movie : movies) {
 			List<String> keywords = crawler.getKeywords(movie);
-			System.out.println("GOOGLE: Keywords for " + movie.getTitle() + " : " + keywords);
+			System.out.println(i++ + ".GOOGLE: Keywords for " + movie.getTitle() + " : " + keywords);
 			for (String keyword : keywords) {
 				movie.getKeywords().add(keyword);
 			}

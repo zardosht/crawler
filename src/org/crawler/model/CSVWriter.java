@@ -42,7 +42,7 @@ public class CSVWriter {
 			while (queue.size() != 0) {
 				writer.write(writeLine(lineToString(queue.poll())));
 			}
-
+			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
