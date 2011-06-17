@@ -1,4 +1,4 @@
-package org.crawler.controler;
+package org.crawler.controller;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

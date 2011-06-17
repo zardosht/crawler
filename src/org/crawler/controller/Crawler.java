@@ -1,4 +1,4 @@
-package org.crawler.controler;
+package org.crawler.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

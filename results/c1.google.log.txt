@@ -4,11 +4,11 @@ INFO: Google Crawling started.
 INFO: Writing results to file: c1.google.result
 17.06.2011 21:24:13 org.crawler.Main startGoogleCrawler
 INFO: Importing movies from file: u.item
-17.06.2011 21:24:14 org.crawler.controler.GoogleCrawler getKeywords
+17.06.2011 21:24:14 org.crawler.controller.GoogleCrawler getKeywords
 INFO: Querying Google for movie: Toy Story (1995)
-17.06.2011 21:24:14 org.crawler.controler.Crawler readSite
+17.06.2011 21:24:14 org.crawler.controller.Crawler readSite
 INFO: Retrieving: http://google.com/search?q=Toy+Story+%281995%29
-17.06.2011 21:24:14 org.crawler.controler.Crawler readSite
+17.06.2011 21:24:14 org.crawler.controller.Crawler readSite
 INFO: Response: HTTP/1.1 200 OK [Date: Fri, 17 Jun 2011 19:24:16 GMT, Expires: -1, Cache-Control: private, max-age=0, Content-Type: text/html; charset=ISO-8859-1, Set-Cookie: PREF=ID=a99a4b77a7a37b48:FF=0:TM=1308338656:LM=1308338656:S=01gTlTlCKSJoVrl1; expires=Sun, 16-Jun-2013 19:24:16 GMT; path=/; domain=.google.com, Set-Cookie: NID=48=l8sJLGMlM_heCkz02YFM4poRZaqcfFkFE7RfSOvuxhTnJweYYti0dJuhv8_538FlQOMXKx2zd84-EG5YIv4uK0n89FEW8zajQvWJUoCfXAYx70To_FAkGGZk4VlfvP_9; expires=Sat, 17-Dec-2011 19:24:16 GMT; path=/; domain=.google.com; HttpOnly, Server: gws, X-XSS-Protection: 1; mode=block, Transfer-Encoding: chunked]
-17.06.2011 21:24:15 org.crawler.controler.GoogleCrawler getKeywords
+17.06.2011 21:24:15 org.crawler.controller.GoogleCrawler getKeywords
 INFO: Retrieved movei URL from Google: http://www.imdb.com/title/tt0114709/

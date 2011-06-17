@@ -14,9 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.crawler.controler.Crawler;
-import org.crawler.controler.DeepCrawler;
-import org.crawler.controler.GoogleCrawler;
+import org.crawler.controller.Crawler;
+import org.crawler.controller.DeepCrawler;
+import org.crawler.controller.GoogleCrawler;
 import org.crawler.model.CSVWriter;
 import org.crawler.model.DataUtil;
 import org.crawler.model.Movie;
