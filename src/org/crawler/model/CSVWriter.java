@@ -21,16 +21,8 @@ public class CSVWriter {
 		this.output = output;
 		this.columns = columns;
 		this.queue = new LinkedList<Map<String, Object>>();
-		writeHeader();
 	}
 
-	private void writeHeader() throws IOException {
-		String line = "";
-		for(String column : columns) {
-			line += column+";";
-		}
-		getWriter().write(writeLine(line.substring(0, line.length() - 1)));
-	}
 
 	public void writeRecord(Map<String, Object> record) {
 		this.queue.add(record);

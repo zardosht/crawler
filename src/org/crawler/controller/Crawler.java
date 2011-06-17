@@ -98,7 +98,6 @@ public class Crawler {
 		logger.info("Retrieving: " + url);
 		HttpGet get = new HttpGet(url);
 		HttpResponse response = getClient().execute(get);
-		System.out.println(response);
 		logger.info("Response: " + response);
 
 		totalSites++;

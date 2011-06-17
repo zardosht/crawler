@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 public class DataUtil {
+	
+	private static Logger logger = Logger.getLogger(DataUtil.class.getPackage().getName());
 
 	private DataUtil() {
 	}
@@ -33,7 +36,7 @@ public class DataUtil {
 			try {
 				date = dateFormat.parse(split[2]);
 			} catch (ParseException e) {
-				System.out.println("WARNING: Could not parse date! "
+				logger.warning("WARNING: Could not parse date! "
 						+ file.getName() + ":" + lineNumber);
 				date = new Date();
 			}
@@ -73,7 +76,7 @@ public class DataUtil {
 			try {
 				date = dateFormat.parse(split[2]);
 			} catch (ParseException e) {
-				System.out.println("WARNING: Could not parse date! "
+				logger.warning("WARNING: Could not parse date! "
 						+ file.getName() + ":" + lineNumber);
 				date = new Date();
 			}

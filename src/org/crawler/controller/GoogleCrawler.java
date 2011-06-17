@@ -30,7 +30,6 @@ public class GoogleCrawler extends Crawler {
 	public List<String> getKeywords(Movie movie) throws Exception {
 		logger.info("Querying Google for movie: " + movie.getTitle());
 		String movieUrl = getMovieUrlFromGoogle(movie);
-		System.out.println(movieUrl);
 		logger.info("Retrieved movei URL from Google: " + movieUrl);
 		ArrayList<String> result;
 		if (!movieUrl.isEmpty()) {
