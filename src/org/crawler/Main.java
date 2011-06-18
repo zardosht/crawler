@@ -67,7 +67,7 @@ public class Main {
 		DeepCrawler crawler = new DeepCrawler("http://www.imdb.com");
 
 		System.out.println("Extracting keywords for " + movies.size() + " items");
-		int i = 1;
+		int i = 1444;
 		for (Movie movie : movies) {
 			List<String> keywords = crawler.getKeywords(movie);
 			System.out.println(i++ + ".IMDB: Keywords for " + movie.getTitle() + " : " + keywords);
