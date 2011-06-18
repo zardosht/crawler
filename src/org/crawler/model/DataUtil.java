@@ -70,17 +70,19 @@ public class DataUtil {
 		while ((line = reader.readLine()) != null) {
 			lineNumber++;
 			String[] split = line.split(";");
-			String id = split[0];
-			String title = split[1];
-			Date date;
+			String id = " ";
+			if(split.length >= 1) id = split[0];
+			String title = " ";
+			if(split.length >= 2) title = split[1];
+			Date date = new Date();
 			try {
-				date = dateFormat.parse(split[2]);
+				if(split.length >= 3) date = dateFormat.parse(split[2]);
 			} catch (ParseException e) {
 				logger.warning("WARNING: Could not parse date! "
 						+ file.getName() + ":" + lineNumber);
-				date = new Date();
 			}
-			String url = split[3];
+			String url = " ";
+			if(split.length >= 4) url = split[3];
 			Movie movie = new Movie(id, title, date, url, null);
 			for (int i = 4; i < split.length; i++) {
 				movie.getKeywords().add(split[i]);
